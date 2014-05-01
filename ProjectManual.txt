@@ -1,0 +1,4 @@
+* Requirements
+
+1) access to the mems device
+2) odometer
