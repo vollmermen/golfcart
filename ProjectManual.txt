@@ -1,4 +1,6 @@
 * Requirements
 
-1) access to the mems device
-2) odometer
+1) produce a pulse each time a point on the wheel passes a fixed boint on the vehicle
+2) produce a pulse from the blue User Key on the board
+3) from the time since the last pulse calculate speed
+4) show speed on display
