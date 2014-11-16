@@ -51,7 +51,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-unsigned int value = 0;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
@@ -192,9 +191,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     /* Toggle LED3 */
     BSP_LED_Toggle(LED3);
   }
-  value++;
-  if (value > 0x10)
-      value = 0;
 }
 
 /**
