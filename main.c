@@ -190,27 +190,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     /* Toggle LED3 */
     BSP_LED_Toggle(LED3);
-    
-    /* Dauer seit letztem Radimpuls */
-    
-    /* Geschwindigkeit in km/h berechnen lassen */
-    
-    /* Geschwindigkeit auf dem Display ausgeben */
-    
-  }
-}
-
-/**
-  * @brief Geschwindigkeit berechnen aus Dauer seit dem letzten Radpuls
-  * @param dauer_msec: Dauer seit dem letzten Radpuls in Millisekunden
-  * @retval geschwindigkeit_kmh: Geschwindigkeit in km/h
-  */
-int Geschwindigkeit(uint16_t dauer_msec)
-{
-  int16_t geschwindigkeit_kmh;
-  {
-    /* Funktionswert */
-    return geschwindigkeit_kmh;
   }
 }
 
