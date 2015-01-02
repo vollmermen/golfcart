@@ -1,6 +1,6 @@
-* Requirements
+* Anforderungen
 
-1) produce a pulse each time a point on the wheel passes a fixed boint on the vehicle
-2) produce a pulse from the blue User Key on the board
-3) from the time since the last pulse calculate speed
-4) show speed on display
+ANF001 Erzeuge einen Puls jedes Mal wenn ein Punkt auf dem Rad an einem festgelegten Stelle am Fahrzeug vorbeikommt
+ANF002 Erzeuge einen Puls jedes Mal wenn ein Benutzer den blauen Taster des Evaluation-Boards drückt
+ANF003 Stelle den Zeitabstand zwischen zwei aufeinander folgenden Pulsen fest
+ANF004 Errechne aus dem Zeitabstand zwischen zwei aufeinander folgenden Pulsen die Fahrzeuggeschwindigkeit
