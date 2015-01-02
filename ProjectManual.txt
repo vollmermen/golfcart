@@ -4,3 +4,11 @@ ANF001 Erzeuge einen Puls jedes Mal wenn ein Punkt auf dem Rad an einem festgele
 ANF002 Erzeuge einen Puls jedes Mal wenn ein Benutzer den blauen Taster des Evaluation-Boards drückt
 ANF003 Stelle den Zeitabstand zwischen zwei aufeinander folgenden Pulsen fest
 ANF004 Errechne aus dem Zeitabstand zwischen zwei aufeinander folgenden Pulsen die Fahrzeuggeschwindigkeit
+
+* Anleitung
+
+Eine Änderung erstellen:
+1. im (lokalen) Arbeitsverzeichnis die Datei(en) ändern
+2. git add <dateiname> : Änderungen auf die (lokale) Staging Area bringen ("auf die Bühne bringen")
+3. git commit <dateiname> : Änderungen in die (lokale) Datenbank schreiben
+4. git push origin master : Änderungen von der (lokalen) Datenbank auf das (remote) Verzeichnis bei github.com schreiben
