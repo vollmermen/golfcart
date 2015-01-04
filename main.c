@@ -55,6 +55,7 @@
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 static void EXTILine0_Config(void);
+uint32_t geschwindigkeit(uint32_t);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -163,6 +164,7 @@ static void SystemClock_Config(void)
   */
 static void EXTILine0_Config(void)
 {
+    
   GPIO_InitTypeDef   GPIO_InitStructure;
 
   /* Enable GPIOA clock */
@@ -186,10 +188,48 @@ static void EXTILine0_Config(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+  uint32_t static uDauer_ms = 0;
+  uint32_t static uLetzterTick_ms = 0;
+  uint32_t uAktuellerTick_ms;                   
+  uint32_t static uGeschwindigkeit_kmh = 0;
+    
   if(GPIO_Pin == KEY_BUTTON_PIN)
   {
     /* Toggle LED3 */
     BSP_LED_Toggle(LED3);
+    
+    /* Dauer seit letztem Radimpuls */
+    uAktuellerTick_ms = HAL_GetTick();                   
+    if ((0 != uLetzterTick_ms) && (uAktuellerTick_ms >= uLetzterTick_ms)) 
+        uDauer_ms = uAktuellerTick_ms - uLetzterTick_ms;
+    else
+        uDauer_ms = uAktuellerTick_ms + (UINT32_MAX - uLetzterTick_ms);
+    
+    /* Geschwindigkeit in km/h berechnen lassen */
+    uGeschwindigkeit_kmh = geschwindigkeit(uDauer_ms);
+    
+    /* Geschwindigkeit auf dem Display ausgeben */
+    
+    /* Aufräumen */
+    uLetzterTick_ms = uAktuellerTick_ms;
+  }
+}
+
+/**
+  * @brief Geschwindigkeit berechnen aus Dauer seit dem letzten Radpuls
+  * @param dauer_msec: Dauer seit dem letzten Radpuls in Millisekunden
+  * @retval geschwindigkeit_kmh: Geschwindigkeit in km/h
+  */
+uint32_t geschwindigkeit(uint32_t dauer_ms)
+{
+  uint32_t const umfang_mm = 2 * 3.14159 * 300; // diesen Wert anpassen je nach Rad
+  uint32_t static geschwindigkeit_mm_pro_ms;
+  uint32_t static geschwindigkeit_km_pro_h;
+  {
+    /* Funktionswert */
+    geschwindigkeit_mm_pro_ms = umfang_mm / dauer_ms;
+    geschwindigkeit_km_pro_h = geschwindigkeit_mm_pro_ms * 3600 / 1000;
+    return geschwindigkeit_km_pro_h;
   }
 }
 
