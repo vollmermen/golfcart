@@ -51,11 +51,14 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+uint32_t static uAktuelleGeschwindigkeit_zehntelkmh = 0;
+uint8_t static uAenderung = 0;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 static void EXTILine0_Config(void);
 uint32_t geschwindigkeit(uint32_t);
+static void GeschwindigkeitAufLCD(uint32_t);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -89,9 +92,38 @@ int main(void)
   /* -3- Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
   EXTILine0_Config();
   
+  /*##-1- Initialize the LCD #################################################*/
+  /* Initialize the LCD */
+  BSP_LCD_Init();
+
+  /* Initialise the LCD Layers */
+  BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
+
+  /* Gleich bleibende Einstellenungen am LCD-Display */
+  /* Set LCD Foreground Layer  */
+  BSP_LCD_SelectLayer(1);
+
+  BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
+
+  /* Clear the LCD */ 
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE); 
+  BSP_LCD_Clear(LCD_COLOR_WHITE);
+
+  /* Set the LCD Text Color */
+  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);  
+
+  /* Display LCD messages */
+  BSP_LCD_DisplayStringAt(0, 10, (uint8_t*)"GOLF CART", CENTER_MODE);
+  BSP_LCD_SetFont(&Font16);
+  BSP_LCD_DisplayStringAt(0, 35, (uint8_t*)"v in km/h", CENTER_MODE);  
+  
   /* Infinite loop */
   while (1)
   {
+      if (uAenderung) {
+        GeschwindigkeitAufLCD(uAktuelleGeschwindigkeit_zehntelkmh);  
+        uAenderung = 0;
+      }
   }
 }
 
@@ -191,7 +223,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   uint32_t static uDauer_ms = 0;
   uint32_t static uLetzterTick_ms = 0;
   uint32_t uAktuellerTick_ms;                   
-  uint32_t static uGeschwindigkeit_kmh = 0;
+  uint32_t static uLetzteGeschwindigkeit_zehntelkmh = 0;
     
   if(GPIO_Pin == KEY_BUTTON_PIN)
   {
@@ -206,12 +238,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         uDauer_ms = uAktuellerTick_ms + (UINT32_MAX - uLetzterTick_ms);
     
     /* Geschwindigkeit in km/h berechnen lassen */
-    uGeschwindigkeit_kmh = geschwindigkeit(uDauer_ms);
+    uAktuelleGeschwindigkeit_zehntelkmh = geschwindigkeit(uDauer_ms);
+    uAenderung = (uLetzteGeschwindigkeit_zehntelkmh != uAktuelleGeschwindigkeit_zehntelkmh);
     
     /* Geschwindigkeit auf dem Display ausgeben */
     
     /* Aufräumen */
     uLetzterTick_ms = uAktuellerTick_ms;
+    uLetzteGeschwindigkeit_zehntelkmh = uAktuelleGeschwindigkeit_zehntelkmh;
   }
 }
 
@@ -224,13 +258,34 @@ uint32_t geschwindigkeit(uint32_t dauer_ms)
 {
   uint32_t const umfang_mm = 2 * 3.14159 * 300; // diesen Wert anpassen je nach Rad
   uint32_t static geschwindigkeit_mm_pro_ms;
-  uint32_t static geschwindigkeit_km_pro_h;
+  uint32_t static geschwindigkeit_zehntelkm_pro_h;
   {
     /* Funktionswert */
     geschwindigkeit_mm_pro_ms = umfang_mm / dauer_ms;
-    geschwindigkeit_km_pro_h = geschwindigkeit_mm_pro_ms * 3600 / 1000;
-    return geschwindigkeit_km_pro_h;
+    geschwindigkeit_zehntelkm_pro_h = geschwindigkeit_mm_pro_ms * 3600 / 100;
+    return geschwindigkeit_zehntelkm_pro_h;
   }
+}
+
+static void GeschwindigkeitAufLCD(uint32_t geschwindigkeit_zehntelkmh)
+{
+  uint8_t desc[50];
+  
+  /* Draw Bitmap */
+  // BSP_LCD_DrawBitmap((BSP_LCD_GetXSize() - 80)/2, 65, (uint8_t *)stlogo);
+  
+  BSP_LCD_SetFont(&Font8);
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()- 20, (uint8_t*)"Copyright (c) vollmermen 2015", CENTER_MODE);
+  
+  BSP_LCD_SetFont(&Font12);
+  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+  BSP_LCD_FillRect(0, BSP_LCD_GetYSize()/2 + 15, BSP_LCD_GetXSize(), 60);
+  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  BSP_LCD_SetBackColor(LCD_COLOR_BLUE); 
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 30, (uint8_t*)"Blauen Taster druecken fuer Puls.", CENTER_MODE);
+  BSP_LCD_SetFont(&Font16);
+  sprintf((char *)desc, "%4.1f", (float) (geschwindigkeit_zehntelkmh/10));
+  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 45, (uint8_t *)desc, CENTER_MODE);   
 }
 
 /**
@@ -277,4 +332,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-//Test jan
