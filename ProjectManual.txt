@@ -14,3 +14,4 @@ Eine Änderung erstellen:
 4. git push origin master : Änderungen von der (lokalen) Datenbank auf das (remote) Verzeichnis bei github.com schreiben
 5. Hier kann es sein, dass jemand Anderes vor Dir schon Änderungen gemacht hat, die musst Du holen (fetch) und dann mit Deinen Änderungen zusammenführen (merge)
 6. ---hier kommt noch mehr---
+7. ---hier kommt auch noch mehr---
